@@ -1,5 +1,7 @@
 package net.osmand.plus.render;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import net.osmand.osm.MapUtils;
 import net.osmand.plus.R;
 import net.osmand.plus.ResourceManager;
@@ -8,7 +10,6 @@ import net.osmand.plus.views.BaseMapLayer;
 import net.osmand.plus.views.MapTileLayer;
 import net.osmand.plus.views.OsmandMapTileView;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
@@ -85,7 +86,7 @@ public class MapVectorLayer extends BaseMapLayer {
 	
 
 	@Override
-	public void onDraw(Canvas canvas, RectF latLonBounds, RectF tilesRect, boolean nightMode) {
+	public void onDraw(GL10 canvas, RectF latLonBounds, RectF tilesRect, boolean nightMode) {
 		if(!visible){
 			return;
 		}
@@ -131,10 +132,10 @@ public class MapVectorLayer extends BaseMapLayer {
 				float x1 = MapUtils.calcDiffPixelX(sin, cos, dleftX1, dtopY1, view.getTileSize()) + view.getCenterPointX();
 				float y1 = MapUtils.calcDiffPixelY(sin, cos, dleftX1, dtopY1, view.getTileSize()) + view.getCenterPointY();
 				
-				canvas.rotate(-rot, view.getCenterPointX(), view.getCenterPointY());
+				//TODO				canvas.rotate(-rot, view.getCenterPointX(), view.getCenterPointY());
 				destImage.set(x1, y1, x1 + bmpLoc.getTileWidth() * mult * view.getTileSize(), y1 + bmpLoc.getTileHeight() * mult * view.getTileSize());
 				if(!bmp.isRecycled()){
-					canvas.drawBitmap(bmp, null, destImage, paintImg);
+					//TODO					canvas.drawBitmap(bmp, null, destImage, paintImg);
 				}
 			}
 		}

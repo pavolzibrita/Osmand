@@ -721,6 +721,7 @@ public class MapActivity extends Activity implements IMapLocationListener, Senso
 		settings.MAP_ACTIVITY_ENABLED.set(false);
 		getMyApplication().getResourceManager().interruptRendering();
 		getMyApplication().getResourceManager().setBusyIndicator(null);
+		mapView.onPause();
 	}
 	
 	public void updateApplicationModeSettings(){
@@ -830,6 +831,7 @@ public class MapActivity extends Activity implements IMapLocationListener, Senso
 		}
 		
 		getMyApplication().getDaynightHelper().onMapResume();
+		mapView.onResume();
 	}
 	
 	

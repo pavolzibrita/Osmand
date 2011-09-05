@@ -1,8 +1,8 @@
 package net.osmand.plus.views;
 
-import android.graphics.Canvas;
+import javax.microedition.khronos.opengles.GL10;
+
 import android.graphics.RectF;
-import net.osmand.map.ITileSource;
 
 /**
  * This class is designed to represent adapter for specific map sources
@@ -18,7 +18,7 @@ public abstract class MapTileAdapter {
 		this.view = view;
 	}
 	
-	public abstract void onDraw(Canvas canvas, RectF latlonRect, RectF tilesRect, boolean nightMode);
+	public abstract void onDraw(GL10 canvas, RectF latlonRect, RectF tilesRect, boolean nightMode);
 	
 	public abstract void onClear(); 
 

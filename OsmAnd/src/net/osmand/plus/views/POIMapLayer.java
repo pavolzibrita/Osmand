@@ -5,6 +5,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import net.osmand.LogUtil;
 import net.osmand.OsmAndFormatter;
 import net.osmand.data.Amenity;
@@ -17,15 +19,14 @@ import net.osmand.plus.render.RenderingIcons;
 import net.osmand.plus.render.UnscaledBitmapLoader;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.PointF;
 import android.graphics.RectF;
-import android.graphics.Paint.Style;
 import android.net.Uri;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
@@ -154,7 +155,7 @@ public class POIMapLayer implements OsmandMapLayer, ContextMenuLayer.IContextMen
 	}
 	
 	@Override
-	public void onDraw(Canvas canvas, RectF latLonBounds, RectF tilesRect, boolean nightMode) {
+	public void onDraw(GL10 canvas, RectF latLonBounds, RectF tilesRect, boolean nightMode) {
 		
 		if (view.getZoom() >= startZoom) {
 			Map<String, Integer> icons = RenderingIcons.getIcons();
@@ -164,8 +165,8 @@ public class POIMapLayer implements OsmandMapLayer, ContextMenuLayer.IContextMen
 			for (Amenity o : objects) {
 				int x = view.getMapXForPoint(o.getLocation().getLongitude());
 				int y = view.getMapYForPoint(o.getLocation().getLatitude());
-				canvas.drawCircle(x, y, r, pointAltUI);
-				canvas.drawCircle(x, y, r, point);
+				//TODO				canvas.drawCircle(x, y, r, pointAltUI);
+				//TODO				canvas.drawCircle(x, y, r, point);
 				String id = null;
 				if(icons.containsKey(o.getSubType())){
 					id = o.getSubType();
@@ -176,7 +177,7 @@ public class POIMapLayer implements OsmandMapLayer, ContextMenuLayer.IContextMen
 					int resId = icons.get(id);
 					Bitmap bmp = getCachedImg(resId);
 					if(bmp != null){
-						canvas.drawBitmap(bmp, x - bmp.getWidth() / 2, y - bmp.getHeight() / 2, paintIcon);
+						//TODO						canvas.drawBitmap(bmp, x - bmp.getWidth() / 2, y - bmp.getHeight() / 2, paintIcon);
 					}
 				}
 				

@@ -1,5 +1,7 @@
 package net.osmand.plus.views;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import net.osmand.map.ITileSource;
 import net.osmand.map.TileSourceManager;
 import net.osmand.map.TileSourceManager.TileSourceTemplate;
@@ -7,7 +9,6 @@ import net.osmand.plus.OsmandSettings;
 import net.osmand.plus.R;
 import net.osmand.plus.ResourceManager;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
@@ -109,7 +110,7 @@ public class MapTileLayer extends BaseMapLayer {
 	
 
 	@Override
-	public void onDraw(Canvas canvas, RectF latlonRect, RectF tilesRect, boolean nightMode) {
+	public void onDraw(GL10 canvas, RectF latlonRect, RectF tilesRect, boolean nightMode) {
 		if ((map == null && mapTileAdapter == null) || !visible) {
 			return;
 		}
@@ -119,7 +120,7 @@ public class MapTileLayer extends BaseMapLayer {
 		drawTileMap(canvas, tilesRect);
 	}
 
-	public void drawTileMap(Canvas canvas, RectF tilesRect) {
+	public void drawTileMap(GL10 canvas, RectF tilesRect) {
 		if(map == null){
 			return;
 		}
@@ -194,13 +195,13 @@ public class MapTileLayer extends BaseMapLayer {
 						int yZoom = ((top + j) % div) * tileSize / div;
 						bitmapToZoom.set(xZoom, yZoom, xZoom + tileSize / div, yZoom + tileSize / div);
 						bitmapToDraw.set(x1, y1, x1 + ftileSize, y1 + ftileSize);
-						canvas.drawBitmap(bmp, bitmapToZoom, bitmapToDraw, paintBitmap);
+						//TODO						canvas.drawBitmap(bmp, bitmapToZoom, bitmapToDraw, paintBitmap);
 						oneTileShown = true;
 					}
 				} else {
 					bitmapToZoom.set(0, 0, tileSize, tileSize);
 					bitmapToDraw.set(x1, y1, x1 + ftileSize, y1 + ftileSize);
-					canvas.drawBitmap(bmp, bitmapToZoom, bitmapToDraw, paintBitmap);
+					//TODO					canvas.drawBitmap(bmp, bitmapToZoom, bitmapToDraw, paintBitmap);
 					oneTileShown = true;
 				}
 			}

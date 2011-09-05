@@ -4,23 +4,24 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import net.osmand.osm.LatLon;
 import net.osmand.plus.R;
 import net.osmand.plus.activities.MapActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.PointF;
 import android.graphics.RectF;
-import android.graphics.Paint.Style;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.WindowManager;
-import android.widget.TextView;
 import android.widget.FrameLayout.LayoutParams;
+import android.widget.TextView;
 
 public class ContextMenuLayer implements OsmandMapLayer {
 	
@@ -93,24 +94,24 @@ public class ContextMenuLayer implements OsmandMapLayer {
 	}
 
 	@Override
-	public void onDraw(Canvas canvas, RectF latLonBounds, RectF tilesRect, boolean nightMode) {
+	public void onDraw(GL10 canvas, RectF latLonBounds, RectF tilesRect, boolean nightMode) {
 		if(latLon != null){
 			int x = view.getMapXForPoint(latLon.getLongitude());
 			int y = view.getMapYForPoint(latLon.getLatitude());
-			canvas.drawCircle(x, y, 5 * dm.density, paintBorder);
-			canvas.drawCircle(x, y, 5 * dm.density, paintBlack);
+//TODO			canvas.drawCircle(x, y, 5 * dm.density, paintBorder);
+//TODO			canvas.drawCircle(x, y, 5 * dm.density, paintBlack);
 			
 			
 			if (textView.getText().length() > 0) {
 				x = view.getRotatedMapXForPoint(latLon.getLatitude(), latLon.getLongitude());
 				y = view.getRotatedMapYForPoint(latLon.getLatitude(), latLon.getLongitude());
-				canvas.rotate(-view.getRotate(), view.getCenterPointX(), view.getCenterPointY());
-				canvas.translate(x - textView.getWidth() / 2, y - textView.getHeight() - 12);
+//TODO				canvas.rotate(-view.getRotate(), view.getCenterPointX(), view.getCenterPointY());
+//TODO				canvas.translate(x - textView.getWidth() / 2, y - textView.getHeight() - 12);
 				int c = textView.getLineCount();
 				textBorder.bottom = textView.getHeight() + 2;
-				canvas.drawRect(textBorder, paintLightBorder);
-				canvas.drawRect(textBorder, paintBlack);
-				textView.draw(canvas);
+//TODO				canvas.drawRect(textBorder, paintLightBorder);
+//TODO				canvas.drawRect(textBorder, paintBlack);
+//TODO				textView.draw(canvas);
 				if (c == 0) {
 					// special case relayout after on draw method
 					textView.layout(0, 0, textSize, (int) ((textView.getPaint().getTextSize() + 4) * textView.getLineCount()));

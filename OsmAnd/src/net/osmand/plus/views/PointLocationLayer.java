@@ -1,17 +1,18 @@
 package net.osmand.plus.views;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import net.osmand.osm.MapUtils;
 import net.osmand.plus.R;
 import net.osmand.plus.activities.ApplicationMode;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.PointF;
 import android.graphics.RectF;
-import android.graphics.Paint.Style;
 import android.location.Location;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
@@ -70,7 +71,7 @@ public class PointLocationLayer implements OsmandMapLayer {
 	}
 	
 	@Override
-	public void onDraw(Canvas canvas, RectF latLonBounds, RectF tilesRect, boolean nightMode) {
+	public void onDraw(GL10 canvas, RectF latLonBounds, RectF tilesRect, boolean nightMode) {
 		if (isLocationVisible(lastKnownLocation)) {
 			checkAppMode(view.getSettings().getApplicationMode());
 			
@@ -81,23 +82,20 @@ public class PointLocationLayer implements OsmandMapLayer {
 					lastKnownLocation.getAccuracy(), view.getTileSize(), view.getWidth());
 			boolean isBearing = lastKnownLocation.hasBearing();
 			if(!isBearing){
-				canvas.drawBitmap(locationIcon, locationX - locationIcon.getWidth() / 2, 
-						locationY - locationIcon.getHeight() / 2, locationPaint);
+				//TODO				canvas.drawBitmap(locationIcon, locationX - locationIcon.getWidth() / 2, locationY - locationIcon.getHeight() / 2, locationPaint);
 			}
 			if (radius > RADIUS * dm.density) {
-				canvas.drawCircle(locationX, locationY, radius, area);
+				//TODO				canvas.drawCircle(locationX, locationY, radius, area);
 			}
 				
 			if(heading != null){
-				canvas.drawArc(getHeadingRect(locationX, locationY), 
-						heading - HEADING_ANGLE/ 2 - 90, HEADING_ANGLE, true, headingPaint);
+				//TODO				canvas.drawArc(getHeadingRect(locationX, locationY), heading - HEADING_ANGLE/ 2 - 90, HEADING_ANGLE, true, headingPaint);
 			}
 			
 			if(isBearing){
 				float bearing = lastKnownLocation.getBearing();
-				canvas.rotate(bearing - 90, locationX, locationY);
-				canvas.drawBitmap(bearingIcon, locationX - bearingIcon.getWidth() / 2, 
-						locationY - bearingIcon.getHeight() / 2, locationPaint);
+				//TODO				canvas.rotate(bearing - 90, locationX, locationY);
+				//TODO				canvas.drawBitmap(bearingIcon, locationX - bearingIcon.getWidth() / 2, locationY - bearingIcon.getHeight() / 2, locationPaint);
 			}
 			
 		}

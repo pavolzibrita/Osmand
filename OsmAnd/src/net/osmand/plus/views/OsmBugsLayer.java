@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import net.osmand.LogUtil;
 import net.osmand.osm.LatLon;
 import net.osmand.plus.OsmandSettings;
@@ -24,7 +26,6 @@ import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
@@ -117,14 +118,14 @@ public class OsmBugsLayer implements OsmandMapLayer, ContextMenuLayer.IContextMe
 	}
 
 	@Override
-	public void onDraw(Canvas canvas, RectF latLonBounds, RectF tilesRect, boolean nightMode) {
+	public void onDraw(GL10 canvas, RectF latLonBounds, RectF tilesRect, boolean nightMode) {
 		if (view.getZoom() >= startZoom) {
 			// request to load
 			requestToLoad(latLonBounds.top, latLonBounds.left, latLonBounds.bottom, latLonBounds.right, view.getZoom());
 			for (OpenStreetBug o : objects) {
 				int x = view.getMapXForPoint(o.getLongitude());
 				int y = view.getMapYForPoint(o.getLatitude());
-				canvas.drawCircle(x, y, getRadiusBug(view.getZoom()), o.isOpened()? pointOpenedUI: pointClosedUI);
+				//TODO				canvas.drawCircle(x, y, getRadiusBug(view.getZoom()), o.isOpened()? pointOpenedUI: pointClosedUI);
 			}
 
 		}

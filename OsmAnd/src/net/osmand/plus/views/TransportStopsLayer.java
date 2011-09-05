@@ -3,13 +3,14 @@ package net.osmand.plus.views;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import net.osmand.data.TransportStop;
 import net.osmand.osm.LatLon;
 import net.osmand.plus.R;
 import net.osmand.plus.TransportIndexRepository;
 import android.content.Context;
 import android.content.DialogInterface.OnClickListener;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
@@ -121,7 +122,7 @@ public class TransportStopsLayer implements OsmandMapLayer, ContextMenuLayer.ICo
 
 	
 	@Override
-	public void onDraw(Canvas canvas, RectF latLonBounds, RectF tilesRect, boolean nightMode) {
+	public void onDraw(GL10 canvas, RectF latLonBounds, RectF tilesRect, boolean nightMode) {
 		if (view.getZoom() >= startZoom) {
 			objects.clear();
 			view.getApplication().getResourceManager().searchTransportAsync(latLonBounds.top, latLonBounds.left, latLonBounds.bottom, latLonBounds.right, view.getZoom(), objects);
@@ -129,7 +130,7 @@ public class TransportStopsLayer implements OsmandMapLayer, ContextMenuLayer.ICo
 			for (TransportStop o : objects) {
 				int x = view.getMapXForPoint(o.getLocation().getLongitude());
 				int y = view.getMapYForPoint(o.getLocation().getLatitude());
-				canvas.drawRect(x - r, y - r, x + r, y + r, pointAltUI);
+				//TODO canvas.drawRect(x - r, y - r, x + r, y + r, pointAltUI);
 			}
 
 		}

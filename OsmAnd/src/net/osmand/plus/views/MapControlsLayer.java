@@ -1,5 +1,7 @@
 package net.osmand.plus.views;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import net.londatiga.android.ActionItem;
 import net.londatiga.android.QuickAction;
 import net.osmand.OsmAndFormatter;
@@ -103,7 +105,7 @@ public class MapControlsLayer implements OsmandMapLayer {
 	}
 
 	@Override
-	public void onDraw(Canvas canvas, RectF latlonRect, RectF tilesRect, boolean nightMode) {
+	public void onDraw(GL10 canvas, RectF latlonRect, RectF tilesRect, boolean nightMode) {
 		BaseMapLayer mainLayer = view.getMainLayer();
 		boolean zoomInEnabled = mainLayer != null && view.getZoom() < mainLayer.getMaximumShownMapZoom();
 		boolean zoomOutEnabled = mainLayer != null && view.getZoom() > mainLayer.getMinimumShownMapZoom();
@@ -114,7 +116,7 @@ public class MapControlsLayer implements OsmandMapLayer {
 			zoomOutButton.setEnabled(zoomOutEnabled);
 		}
 		
-		drawApplicationMode(canvas);
+		//TODO		drawApplicationMode(canvas);
 		
 		if(view.isZooming()){
 			showZoomLevel = true;
@@ -125,9 +127,9 @@ public class MapControlsLayer implements OsmandMapLayer {
 			}
 		}
 		if (showZoomLevel) {
-			drawZoomLevel(canvas);
+			//TODO			drawZoomLevel(canvas);
 		} else {
-			drawRuler(canvas);
+			//TODO			drawRuler(canvas);
 		}
 	}
 

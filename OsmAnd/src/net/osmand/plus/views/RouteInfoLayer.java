@@ -2,19 +2,20 @@ package net.osmand.plus.views;
 
 import java.util.List;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import net.osmand.plus.R;
 import net.osmand.plus.activities.RoutingHelper;
-import net.osmand.plus.activities.ShowRouteInfoActivity;
 import net.osmand.plus.activities.RoutingHelper.IRouteInformationListener;
 import net.osmand.plus.activities.RoutingHelper.RouteDirectionInfo;
+import net.osmand.plus.activities.ShowRouteInfoActivity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.PointF;
 import android.graphics.RectF;
-import android.graphics.Paint.Style;
 import android.location.Location;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -22,9 +23,9 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.FrameLayout.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.FrameLayout.LayoutParams;
 
 
 public class RouteInfoLayer implements OsmandMapLayer, IRouteInformationListener {
@@ -162,37 +163,37 @@ public class RouteInfoLayer implements OsmandMapLayer, IRouteInformationListener
 
 	public final int shiftCenter = 55;
 	@Override
-	public void onDraw(Canvas canvas, RectF latLonBounds, RectF tilesRect, boolean nightMode) {
+	public void onDraw(GL10 canvas, RectF latLonBounds, RectF tilesRect, boolean nightMode) {
 		if(isVisible()){
 			border.set(layout.getLeft() - 10 * dm.density, layout.getTop() - 4 * dm.density, 
 					layout.getRight() - (shiftCenter - 5) * dm.density, layout.getBottom() + 4 * dm.density);
-			canvas.drawRoundRect(border, 5 * dm.density, 5 * dm.density, paintBorder);
-			canvas.drawRoundRect(border, 5 * dm.density, 5 * dm.density, paintBlack);
-			List<RouteDirectionInfo> dir = routingHelper.getRouteDirections();
-			if(dir != null && directionInfo < dir.size() && directionInfo >= 0){
-				canvas.rotate(view.getRotate(), view.getCenterPointX(), view.getCenterPointY());
-				RouteDirectionInfo info = dir.get(directionInfo);
-				
-				Location loc = routingHelper.getLocationFromRouteDirection(info);
-				int x = view.getRotatedMapXForPoint(loc.getLatitude(), loc.getLongitude());
-				int y = view.getRotatedMapYForPoint(loc.getLatitude(), loc.getLongitude());
-				canvas.drawCircle(x, y, 5 * dm.density, paintBorder);
-				canvas.drawCircle(x, y, 5 * dm.density, paintBlack);
-				
-				if (textView.getText().length() > 0) {
-					canvas.translate(x - textView.getWidth() / 2, y - textView.getHeight() - 12);
-					int c = textView.getLineCount();
-					textBorder.bottom = textView.getHeight() + 2;
-					canvas.drawRect(textBorder, paintLightBorder);
-					canvas.drawRect(textBorder, paintBlack);
-					textView.draw(canvas);
-					if (c == 0) {
-						// special case relayout after on draw method
-						textView.layout(0, 0, textSize, (int) ((textView.getPaint().getTextSize() + 4) * textView.getLineCount()));
-						view.refreshMap();
-					}
-				}
-			}
+//TODO			canvas.drawRoundRect(border, 5 * dm.density, 5 * dm.density, paintBorder);
+//TODO			canvas.drawRoundRect(border, 5 * dm.density, 5 * dm.density, paintBlack);
+//TODO			List<RouteDirectionInfo> dir = routingHelper.getRouteDirections();
+//TODO			if(dir != null && directionInfo < dir.size() && directionInfo >= 0){
+//TODO				canvas.rotate(view.getRotate(), view.getCenterPointX(), view.getCenterPointY());
+//TODO				RouteDirectionInfo info = dir.get(directionInfo);
+//TODO				
+//TODO				Location loc = routingHelper.getLocationFromRouteDirection(info);
+//TODO				int x = view.getRotatedMapXForPoint(loc.getLatitude(), loc.getLongitude());
+//TODO				int y = view.getRotatedMapYForPoint(loc.getLatitude(), loc.getLongitude());
+//TODO				canvas.drawCircle(x, y, 5 * dm.density, paintBorder);
+//TODO				canvas.drawCircle(x, y, 5 * dm.density, paintBlack);
+//TODO				
+//TODO				if (textView.getText().length() > 0) {
+//TODO					canvas.translate(x - textView.getWidth() / 2, y - textView.getHeight() - 12);
+//TODO					int c = textView.getLineCount();
+//TODO					textBorder.bottom = textView.getHeight() + 2;
+//TODO					canvas.drawRect(textBorder, paintLightBorder);
+//TODO					canvas.drawRect(textBorder, paintBlack);
+//TODO					textView.draw(canvas);
+//TODO					if (c == 0) {
+//TODO						// special case relayout after on draw method
+//TODO						textView.layout(0, 0, textSize, (int) ((textView.getPaint().getTextSize() + 4) * textView.getLineCount()));
+//TODO						view.refreshMap();
+//TODO					}
+//TODO				}
+//TODO			}
 		}
 	}
 

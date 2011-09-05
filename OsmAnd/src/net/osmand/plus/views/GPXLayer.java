@@ -7,6 +7,8 @@ import net.osmand.GPXUtilities.Track;
 import net.osmand.GPXUtilities.TrkSegment;
 import net.osmand.GPXUtilities.WptPt;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -53,7 +55,7 @@ public class GPXLayer implements OsmandMapLayer {
 	
 	
 	@Override
-	public void onDraw(Canvas canvas, RectF latLonBounds, RectF tilesRect, boolean nightMode) {
+	public void onDraw(GL10 canvas, RectF latLonBounds, RectF tilesRect, boolean nightMode) {
 		List<List<WptPt>> points = this.points;
 		if(points.isEmpty()){
 			return;
@@ -72,7 +74,7 @@ public class GPXLayer implements OsmandMapLayer {
 					}
 				} else if (!(latLonBounds.left <= ls.lon + 0.03 && ls.lon - 0.03 <= latLonBounds.right
 						&& latLonBounds.bottom <= ls.lat + 0.03 && ls.lat - 0.03 <= latLonBounds.top)) {
-					drawSegment(canvas, l, startIndex, i);
+					//TODO					drawSegment(canvas, l, startIndex, i);
 					// do not continue make method more efficient (because it calls in UI thread)
 					// this break also has logical sense !
 					// break;
@@ -80,7 +82,7 @@ public class GPXLayer implements OsmandMapLayer {
 				}
 			}
 			if (startIndex != -1) {
-				drawSegment(canvas, l, startIndex, l.size() - 1);
+				//TODO				drawSegment(canvas, l, startIndex, l.size() - 1);
 				continue;
 			}
 		}

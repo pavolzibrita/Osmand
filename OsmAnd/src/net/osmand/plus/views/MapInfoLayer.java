@@ -1,5 +1,7 @@
 package net.osmand.plus.views;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import net.osmand.Algoritms;
 import net.osmand.OsmAndFormatter;
 import net.osmand.osm.LatLon;
@@ -14,12 +16,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.PointF;
-import android.graphics.RectF;
 import android.graphics.Paint.Cap;
 import android.graphics.Paint.Join;
 import android.graphics.Paint.Style;
+import android.graphics.Path;
+import android.graphics.PointF;
+import android.graphics.RectF;
 import android.location.Location;
 import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
@@ -181,7 +183,7 @@ public class MapInfoLayer implements OsmandMapLayer {
 	}
 	
 	@Override
-	public void onDraw(Canvas canvas, RectF latlonBounds, RectF tilesRect, boolean nightMode) {
+	public void onDraw(GL10 canvas, RectF latlonBounds, RectF tilesRect, boolean nightMode) {
 		// prepare data (left distance, speed)
 		if(map.getPointToNavigate() != null){
 			int d = 0;
@@ -217,10 +219,11 @@ public class MapInfoLayer implements OsmandMapLayer {
 			cachedZoomString = view.getZoom()+""; //$NON-NLS-1$
 		}
 		// draw zoom
-		canvas.drawRoundRect(boundsForZoom, roundCorner, roundCorner, paintAlphaGray);
-		canvas.drawRoundRect(boundsForZoom, roundCorner, roundCorner, paintBlack);
-		canvas.drawText(cachedZoomString, boundsForZoom.left + 5 * scaleCoefficient, boundsForZoom.bottom - 8 * scaleCoefficient,
-				paintBlack);
+		//TODO		
+//		canvas.drawRoundRect(boundsForZoom, roundCorner, roundCorner, paintAlphaGray);
+//		canvas.drawRoundRect(boundsForZoom, roundCorner, roundCorner, paintBlack);
+//		canvas.drawText(cachedZoomString, boundsForZoom.left + 5 * scaleCoefficient, boundsForZoom.bottom - 8 * scaleCoefficient,
+//				paintBlack);
 		
 		// draw speed 	
 		if(map.getLastKnownLocation() != null && map.getLastKnownLocation().hasSpeed()){
@@ -231,29 +234,30 @@ public class MapInfoLayer implements OsmandMapLayer {
 				boundsForSpeed.right = boundsForDist.right = Math.max(right, boundsForDist.right);
 			}
 			if(cachedSpeed > 0){
-				canvas.drawRoundRect(boundsForSpeed, roundCorner, roundCorner, paintAlphaGray);
-				canvas.drawRoundRect(boundsForSpeed, roundCorner, roundCorner, paintBlack);
-				canvas.drawText(cachedSpeedString, boundsForSpeed.left + 8 * scaleCoefficient, boundsForSpeed.bottom - 9f * scaleCoefficient, paintBlack);
+				
+//TODO				canvas.drawRoundRect(boundsForSpeed, roundCorner, roundCorner, paintAlphaGray);
+//TODO				canvas.drawRoundRect(boundsForSpeed, roundCorner, roundCorner, paintBlack);
+//TODO				canvas.drawText(cachedSpeedString, boundsForSpeed.left + 8 * scaleCoefficient, boundsForSpeed.bottom - 9f * scaleCoefficient, paintBlack);
 			}
 		}
 		// draw distance to point
 		if(cachedDistString != null){
-			canvas.drawRoundRect(boundsForDist, roundCorner, roundCorner, paintAlphaGray);
-			canvas.drawRoundRect(boundsForDist, roundCorner, roundCorner, paintBlack);
-			canvas.drawCircle(boundsForDist.left + 8 * scaleCoefficient, boundsForDist.bottom - 15 * scaleCoefficient,
-					4 * scaleCoefficient, fillRed);
-			canvas.drawText(cachedDistString, boundsForDist.left + 15 * scaleCoefficient, boundsForDist.bottom - 9f * scaleCoefficient,
-					paintBlack);
+//TODO			canvas.drawRoundRect(boundsForDist, roundCorner, roundCorner, paintAlphaGray);
+//TODO			canvas.drawRoundRect(boundsForDist, roundCorner, roundCorner, paintBlack);
+//TODO			canvas.drawCircle(boundsForDist.left + 8 * scaleCoefficient, boundsForDist.bottom - 15 * scaleCoefficient,
+//TODO					4 * scaleCoefficient, fillRed);
+//TODO			canvas.drawText(cachedDistString, boundsForDist.left + 15 * scaleCoefficient, boundsForDist.bottom - 9f * scaleCoefficient,
+//TODO					paintBlack);
 		}
 		
 		// draw route information
-		drawRouteInfo(canvas);
-		
-		// draw compass the last (!) because it use rotating
-		canvas.drawRoundRect(boundsForCompass, roundCorner, roundCorner, paintAlphaGray);
-		canvas.drawRoundRect(boundsForCompass, roundCorner, roundCorner, paintBlack);
-		canvas.rotate(view.getRotate(), 17 * scaleCoefficient, 15 * scaleCoefficient);
-		canvas.drawBitmap(compass, 0, 0, paintImg);
+//TODO		drawRouteInfo(canvas);
+//TODO		
+//TODO		// draw compass the last (!) because it use rotating
+//TODO		canvas.drawRoundRect(boundsForCompass, roundCorner, roundCorner, paintAlphaGray);
+//TODO		canvas.drawRoundRect(boundsForCompass, roundCorner, roundCorner, paintBlack);
+//TODO		canvas.rotate(view.getRotate(), 17 * scaleCoefficient, 15 * scaleCoefficient);
+//TODO		canvas.drawBitmap(compass, 0, 0, paintImg);
 	}
 	
 	

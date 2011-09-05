@@ -1,16 +1,17 @@
 package net.osmand.plus.views;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import net.osmand.osm.LatLon;
 import net.osmand.plus.R;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.PointF;
 import android.graphics.RectF;
-import android.graphics.Paint.Style;
 import android.location.Location;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
@@ -44,8 +45,6 @@ public class PointNavigationLayer implements OsmandMapLayer {
 		bitmapPaint.setFilterBitmap(true);
 		targetPoint = BitmapFactory.decodeResource(view.getResources(), R.drawable.target_point);
 		arrowToDestination = BitmapFactory.decodeResource(view.getResources(), R.drawable.arrow_to_destination);
-
-		
 	}
 	
 	public void initLayer(OsmandMapTileView view) {
@@ -59,7 +58,7 @@ public class PointNavigationLayer implements OsmandMapLayer {
 
 	
 	@Override
-	public void onDraw(Canvas canvas, RectF latLonBounds, RectF tilesRect, boolean nightMode) {
+	public void onDraw(GL10 canvas, RectF latLonBounds, RectF tilesRect, boolean nightMode) {
 		if(pointToNavigate == null){
 			return;
 		}
@@ -68,16 +67,16 @@ public class PointNavigationLayer implements OsmandMapLayer {
 			int marginY = 2 * targetPoint.getHeight() / 3;
 			int locationX = view.getMapXForPoint(pointToNavigate.getLongitude());
 			int locationY = view.getMapYForPoint(pointToNavigate.getLatitude());
-			canvas.rotate(-view.getRotate(), locationX, locationY);
-			canvas.drawBitmap(targetPoint, locationX - marginX, locationY - marginY, bitmapPaint);
+			//TODO			canvas.rotate(-view.getRotate(), locationX, locationY);
+			//TODO			canvas.drawBitmap(targetPoint, locationX - marginX, locationY - marginY, bitmapPaint);
 		} else {
 			Location.distanceBetween(view.getLatitude(), view.getLongitude(), pointToNavigate.getLatitude(),
 					pointToNavigate.getLongitude(), calculations);
 			float bearing = calculations[1] - 90;
 			float radiusBearing = DIST_TO_SHOW * dm.density;
-			canvas.rotate(bearing, view.getCenterPointX(), view.getCenterPointY());
-			canvas.translate(-24 * dm.density + radiusBearing, -22 * dm.density);
-			canvas.drawBitmap(arrowToDestination, view.getCenterPointX(), view.getCenterPointY(), bitmapPaint);
+			//TODO			canvas.rotate(bearing, view.getCenterPointX(), view.getCenterPointY());
+			//TODO			canvas.translate(-24 * dm.density + radiusBearing, -22 * dm.density);
+			//TODO			canvas.drawBitmap(arrowToDestination, view.getCenterPointX(), view.getCenterPointY(), bitmapPaint);
 			
 		}
 	}

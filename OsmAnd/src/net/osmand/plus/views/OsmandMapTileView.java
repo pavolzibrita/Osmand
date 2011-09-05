@@ -1,10 +1,16 @@
 package net.osmand.plus.views;
 
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
 
 import net.osmand.LogUtil;
 import net.osmand.data.MapTileDownloader;
@@ -16,6 +22,8 @@ import net.osmand.osm.MapUtils;
 import net.osmand.plus.OsmandSettings;
 import net.osmand.plus.activities.OsmandApplication;
 import net.osmand.plus.views.MultiTouchSupport.MultiTouchZoomListener;
+import net.osmand.plus.views.OsmandMapTileView.CenterCircle;
+import net.osmand.plus.views.OsmandMapTileView.OsmandMapTileViewRenderer;
 
 import org.apache.commons.logging.Log;
 
@@ -23,26 +31,152 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.Paint.Style;
+import android.opengl.GLSurfaceView;
+import android.opengl.GLU;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.FloatMath;
 import android.view.GestureDetector;
-import android.view.MotionEvent;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.view.WindowManager;
 import android.view.GestureDetector.OnDoubleTapListener;
 import android.view.GestureDetector.OnGestureListener;
+import android.view.MotionEvent;
+import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
+import android.view.WindowManager;
 
-public class OsmandMapTileView extends SurfaceView implements IMapDownloaderCallback, Callback {
+public class OsmandMapTileView extends GLSurfaceView implements IMapDownloaderCallback, Callback {
 
+	public class CenterCircle {
+		private FloatBuffer circleVB;
+		int VERTICIES=20; // more than needed
+		
+		public CenterCircle() {
+	        ByteBuffer vbb = ByteBuffer.allocateDirect(
+	                // (# of coordinate values * 4 bytes per float)
+	        		VERTICIES * 3 * 4); 
+	        vbb.order(ByteOrder.nativeOrder());// use the device hardware's native byte order
+	        circleVB = vbb.asFloatBuffer();
+	        //the circle
+			float coords[] = new float[VERTICIES * 3];
+			float theta = 0;
+			float radius = 0.05f;
+			for (int i = 0; i < VERTICIES * 3; i += 3) {
+			  coords[i + 0] = (float) Math.cos(theta)*radius;
+			  coords[i + 1] = (float) Math.sin(theta)*radius;
+			  coords[i + 2] = 0;
+			  theta += Math.PI / (VERTICIES/2);
+			}
+			circleVB.put(coords);
+			circleVB.position(0);
+		}
+
+		public void draw(GL10 gl) {
+			  gl.glColor4f(0, 0, 1, 0.5f);
+			  gl.glVertexPointer(3, GL10.GL_FLOAT, 0, circleVB);
+			  gl.glDrawArrays(GL10.GL_LINE_LOOP, 0, VERTICIES);
+//			  canvas.drawCircle(w, h, 3 * dm.density, paintCenter);
+//			  canvas.drawCircle(w, h, 7 * dm.density, paintCenter);
+		}
+	}
+	
+	public class OsmandMapTileViewRenderer implements Renderer {
+
+		private FloatBuffer triangleVB;
+		private boolean nightMode = false;
+		private CenterCircle centerCircle;
+
+		@Override
+		public void onDrawFrame(GL10 gl) {
+			//TODO make this setup only if the nightMode changes...
+			if(nightMode){
+				gl.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+			} else {
+				gl.glClearColor(1f, 1f, 1f, 1.0f);
+			}
+	        // Redraw background color
+	        gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+	        
+	        // Set GL_MODELVIEW transformation mode
+	        gl.glMatrixMode(GL10.GL_MODELVIEW);
+	        gl.glLoadIdentity();   // reset the matrix to its default state
+	        
+	        // Create a rotation for the triangle
+	        long time = SystemClock.uptimeMillis() % 4000L;
+	        float angle = 0.090f * ((int) time);
+	        
+	        // When using GL_MODELVIEW, you must set the view point
+	        GLU.gluLookAt(gl, 0, 0, -5, 0f, 0f, 0f, 0f, 1.0f, 0.0f);    
+	        
+	        gl.glRotatef(angle, 0.0f, 0.0f, 1.0f);     
+	        
+	        // Draw the triangle
+	        gl.glColor4f(0.63671875f, 0.76953125f, 0.22265625f, 0.0f);
+	        gl.glVertexPointer(3, GL10.GL_FLOAT, 0, triangleVB);
+	        gl.glDrawArrays(GL10.GL_TRIANGLES, 0, 3);
+	        
+	        drawOverMap(gl, latlonRect, tilesRect, nightMode);
+	        
+			if (showMapPosition) {
+			  centerCircle.draw(gl);
+			}
+
+		}
+
+		@Override
+		public void onSurfaceChanged(GL10 gl, int width, int height) {
+		      gl.glViewport(0, 0, width, height);
+		      
+		      // make adjustments for screen ratio
+		      float ratio = (float) width / height;
+		      gl.glMatrixMode(GL10.GL_PROJECTION);        // set matrix to projection mode
+		      gl.glLoadIdentity();                        // reset the matrix to its default state
+		      gl.glFrustumf(-ratio, ratio, -1, 1, 3, 7);  // apply the projection matrix
+		}
+
+		@Override
+		public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+	        // Set the background frame color
+	        gl.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+	        
+	        // initialize the triangle vertex array
+			initShapes();
+			
+	        // Enable use of vertex arrays
+	        gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+		}
+
+	    private void initShapes(){
+	        
+	        float triangleCoords[] = {
+	            // X, Y, Z
+	            -0.5f, -0.25f, 0,
+	             0.5f, -0.25f, 0,
+	             0.0f,  0.559016994f, 0
+	        }; 
+	        
+	        // initialize vertex Buffer for triangle  
+	        ByteBuffer vbb = ByteBuffer.allocateDirect(
+	                // (# of coordinate values * 4 bytes per float)
+	                triangleCoords.length * 4); 
+	        vbb.order(ByteOrder.nativeOrder());// use the device hardware's native byte order
+	        triangleVB = vbb.asFloatBuffer();  // create a floating point buffer from the ByteBuffer
+	        triangleVB.put(triangleCoords);    // add the coordinates to the FloatBuffer
+	        triangleVB.position(0);            // set the buffer to read the first coordinate
+//	        
+	        centerCircle = new CenterCircle();
+	    }
+
+		public void setNightMode(boolean nightMode) {
+			this.nightMode = nightMode;
+		}
+	}
 
 	protected final int emptyTileDivisor = 16;
 	
@@ -110,6 +244,7 @@ public class OsmandMapTileView extends SurfaceView implements IMapDownloaderCall
 	private DisplayMetrics dm;
 
 	private final OsmandApplication application;
+	private OsmandMapTileViewRenderer renderer;
 
 	public OsmandMapTileView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -165,17 +300,20 @@ public class OsmandMapTileView extends SurfaceView implements IMapDownloaderCall
 		dm = new DisplayMetrics();
 		mgr.getDefaultDisplay().getMetrics(dm);
 		
+		renderer = new OsmandMapTileViewRenderer();
+		setRenderer(renderer);
+		setRenderMode(RENDERMODE_WHEN_DIRTY);
 	}
 
-	@Override
-	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-		refreshMap();
-	}
-
-	@Override
-	public void surfaceCreated(SurfaceHolder holder) {
-		refreshMap();
-	}
+//	@Override
+//	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+//		refreshMap();
+//	}
+//
+//	@Override
+//	public void surfaceCreated(SurfaceHolder holder) {
+//		refreshMap();
+//	}
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
@@ -416,23 +554,22 @@ public class OsmandMapTileView extends SurfaceView implements IMapDownloaderCall
 	private void refreshMapInternal() {
 		handler.removeMessages(1);
 		
-		// long time = System.currentTimeMillis();
+//		 long time = System.currentTimeMillis();
 
 		boolean useInternet = getSettings().USE_INTERNET_TO_DOWNLOAD_TILES.get();
 		if (useInternet) {
 			MapTileDownloader.getInstance().refuseAllPreviousRequests();
 		}
 		
-
-		SurfaceHolder holder = getHolder();
-		synchronized (holder) {
+//		SurfaceHolder holder = getHolder();
+//		synchronized (holder) {
 			int nzoom = getZoom();
 			float tileX = (float) MapUtils.getTileNumberX(nzoom, longitude);
 			float tileY = (float) MapUtils.getTileNumberY(nzoom, latitude);
 			float w = getCenterPointX();
 			float h = getCenterPointY();
-			Canvas canvas = holder.lockCanvas();
-			if (canvas != null) {
+//			Canvas canvas = holder.lockCanvas();
+//			if (canvas != null) {
 				boolean nightMode = false;
 				if (application != null) {
 					Boolean dayNightRenderer = application.getDaynightHelper().getDayNightRenderer();
@@ -440,44 +577,48 @@ public class OsmandMapTileView extends SurfaceView implements IMapDownloaderCall
 						nightMode = !dayNightRenderer.booleanValue();
 					}
 				}
-				try {
+//				try {
 					boundsRect.set(0, 0, getWidth(), getHeight());
 					calculateTileRectangle(boundsRect, w, h, tileX, tileY, tilesRect);
 					latlonRect.top = (float) MapUtils.getLatitudeFromTile(nzoom, tilesRect.top);
 					latlonRect.left = (float) MapUtils.getLongitudeFromTile(nzoom, tilesRect.left);
 					latlonRect.bottom = (float) MapUtils.getLatitudeFromTile(nzoom, tilesRect.bottom);
 					latlonRect.right = (float) MapUtils.getLongitudeFromTile(nzoom, tilesRect.right);
-					if(nightMode){
-						canvas.drawARGB(255, 100, 100, 100);
-					} else {
-						canvas.drawARGB(255, 225, 225, 225);
-					}
-					// TODO map
-//					float ftileSize = getTileSize();
-//					int left = (int) FloatMath.floor(tilesRect.left);
-//					int top = (int) FloatMath.floor(tilesRect.top);
-//					int width = (int) FloatMath.ceil(tilesRect.right - left);
-//					int height = (int) FloatMath.ceil(tilesRect.bottom - top);
-//					for (int i = 0; i < width; i++) {
-//						for (int j = 0; j < height; j++) {
-//							float x1 = (i + left - tileX) * ftileSize + w;
-//							float y1 = (j + top - tileY) * ftileSize + h;
-//							drawEmptyTile(canvas, x1, y1, ftileSize, nightMode);
-//						}
-//					}
-					drawOverMap(canvas, latlonRect, tilesRect, nightMode);
-					
+				
+					renderer.setNightMode(nightMode);
+////					if(nightMode){
+////						canvas.drawARGB(255, 100, 100, 100);
+////					} else {
+////						canvas.drawARGB(255, 225, 225, 225);
+////					}
+//					// TODO map
+////					float ftileSize = getTileSize();
+////					int left = (int) FloatMath.floor(tilesRect.left);
+////					int top = (int) FloatMath.floor(tilesRect.top);
+////					int width = (int) FloatMath.ceil(tilesRect.right - left);
+////					int height = (int) FloatMath.ceil(tilesRect.bottom - top);
+////					for (int i = 0; i < width; i++) {
+////						for (int j = 0; j < height; j++) {
+////							float x1 = (i + left - tileX) * ftileSize + w;
+////							float y1 = (j + top - tileY) * ftileSize + h;
+////							drawEmptyTile(canvas, x1, y1, ftileSize, nightMode);
+////						}
+////					}
+//					requestRender();
+//					//drawOverMap(canvas, latlonRect, tilesRect, nightMode);
+//					
 //					log.info("Draw with layers " + (System.currentTimeMillis() - time));
-				} finally {
-					holder.unlockCanvasAndPost(canvas);
-				}
-			}
-		}
+//				} finally {
+//					holder.unlockCanvasAndPost(canvas);
+//				}
+//			}
+//		}
+		requestRender();
 	}
-	
-	private void drawOverMap(Canvas canvas, RectF latlonRect, RectF tilesRect, boolean nightMode) {
-		int w = getCenterPointX();
-		int h = getCenterPointY();
+
+	private void drawOverMap(GL10 gl, RectF latlonRect, RectF tilesRect, boolean nightMode) {
+//		int w = getCenterPointX();
+//		int h = getCenterPointY();
 
 		// long prev = System.currentTimeMillis();
 
@@ -485,13 +626,13 @@ public class OsmandMapTileView extends SurfaceView implements IMapDownloaderCall
 			try {
 				
 				OsmandMapLayer layer = layers.get(i);
-				canvas.save();
+//				canvas.save();
 				// rotate if needed
-				if (!layer.drawInScreenPixels()) {
-					canvas.rotate(rotate, w, h);
-				}
-				layer.onDraw(canvas, latlonRect, tilesRect, nightMode);
-				canvas.restore();
+//				if (!layer.drawInScreenPixels()) {
+//					canvas.rotate(rotate, w, h);
+//				}
+				layer.onDraw(gl, latlonRect, tilesRect, nightMode);
+//				canvas.restore();
 			} catch (IndexOutOfBoundsException e) {
 				// skip it
 			}
@@ -499,11 +640,11 @@ public class OsmandMapTileView extends SurfaceView implements IMapDownloaderCall
 			// log.debug("Layer time " + (time - prev) + " " + zOrders.get(layers.get(i)));
 			// prev = time;
 		}
-		canvas.restore();
-		if (showMapPosition) {
-			canvas.drawCircle(w, h, 3 * dm.density, paintCenter);
-			canvas.drawCircle(w, h, 7 * dm.density, paintCenter);
-		}
+//		canvas.restore();
+//		if (showMapPosition) {
+//			canvas.drawCircle(w, h, 3 * dm.density, paintCenter);
+//			canvas.drawCircle(w, h, 7 * dm.density, paintCenter);
+//		}
 	}
 
 	public boolean mapIsRefreshing() {

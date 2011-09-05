@@ -2,19 +2,20 @@ package net.osmand.plus.views;
 
 import java.util.List;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import net.osmand.FavouritePoint;
 import net.osmand.osm.LatLon;
 import net.osmand.plus.FavouritesDbHelper;
 import net.osmand.plus.R;
 import android.content.Context;
 import android.content.DialogInterface.OnClickListener;
-import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.RectF;
-import android.graphics.Paint.Style;
 import android.util.DisplayMetrics;
 import android.util.FloatMath;
 import android.view.WindowManager;
@@ -87,7 +88,7 @@ public class FavoritesLayer implements OsmandMapLayer, ContextMenuLayer.IContext
 	
 	
 	@Override
-	public void onDraw(Canvas canvas, RectF latLonBounds, RectF tilesRect, boolean nightMode) {
+	public void onDraw(GL10 canvas, RectF latLonBounds, RectF tilesRect, boolean nightMode) {
 		if (view.getZoom() >= startZoom) {
 			// request to load
 			for (FavouritePoint o : favorites.getFavouritePoints()) {
@@ -97,8 +98,8 @@ public class FavoritesLayer implements OsmandMapLayer, ContextMenuLayer.IContext
 					int y = view.getMapYForPoint(o.getLatitude());
 					matrix.setTranslate(x, y);
 					path.transform(matrix, pathDst);
-					canvas.drawPath(pathDst, paint);
-					canvas.drawPath(pathDst, paintBlack);
+					//TODO					canvas.drawPath(pathDst, paint);
+					//TODO					canvas.drawPath(pathDst, paintBlack);
 				}
 			}
 		}

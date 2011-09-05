@@ -2,13 +2,14 @@ package net.osmand.plus.views;
 
 import java.util.List;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import net.osmand.data.TransportRoute;
 import net.osmand.data.TransportStop;
 import net.osmand.osm.LatLon;
 import net.osmand.plus.TransportIndexRepository.RouteInfoLocation;
 import net.osmand.plus.activities.TransportRouteHelper;
 import android.content.Context;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
@@ -58,7 +59,7 @@ public class TransportInfoLayer implements OsmandMapLayer {
 	}
 
 	@Override
-	public void onDraw(Canvas canvas, RectF latLonBounds, RectF tilesRect, boolean nightMode) {
+	public void onDraw(GL10 canvas, RectF latLonBounds, RectF tilesRect, boolean nightMode) {
 		if(routeHelper.routeIsCalculated() && visible){
 			List<RouteInfoLocation> list = routeHelper.getRoute();
 			for(RouteInfoLocation l : list){
@@ -90,7 +91,7 @@ public class TransportInfoLayer implements OsmandMapLayer {
 								&& location.getLongitude() <= latLonBounds.right ) {
 							int x = view.getRotatedMapXForPoint(location.getLatitude(), location.getLongitude());
 							int y = view.getRotatedMapYForPoint(location.getLatitude(), location.getLongitude());
-							canvas.drawRect(x - getRadius(), y - getRadius(), x + getRadius(), y + getRadius(), toShow);
+							//TODO canvas.drawRect(x - getRadius(), y - getRadius(), x + getRadius(), y + getRadius(), toShow);
 						}
 					}
 				}

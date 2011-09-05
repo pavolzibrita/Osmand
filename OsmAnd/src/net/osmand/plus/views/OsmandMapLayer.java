@@ -1,5 +1,7 @@
 package net.osmand.plus.views;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import android.graphics.Canvas;
 import android.graphics.PointF;
 import android.graphics.RectF;
@@ -9,7 +11,7 @@ public interface OsmandMapLayer {
 	
 	public void initLayer(OsmandMapTileView view);
 	
-	public void onDraw(Canvas canvas, RectF latlonRect, RectF tilesRect, boolean nightMode);
+	public void onDraw(GL10 canvas, RectF latlonRect, RectF tilesRect, boolean nightMode);
 	
 	public void destroyLayer();
 	

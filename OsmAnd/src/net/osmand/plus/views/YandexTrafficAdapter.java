@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import net.osmand.Algoritms;
 import net.osmand.LogUtil;
 import net.osmand.map.TileSourceManager.TileSourceTemplate;
@@ -15,7 +17,6 @@ import net.osmand.plus.ResourceManager;
 
 import org.apache.commons.logging.Log;
 
-import android.graphics.Canvas;
 import android.graphics.RectF;
 import android.widget.Toast;
 
@@ -35,7 +36,7 @@ public class YandexTrafficAdapter  extends MapTileAdapter {
 	}
 	
 	@Override
-	public void onDraw(Canvas canvas, RectF latlonRect, RectF tilesRect, boolean nightMode) {
+	public void onDraw(GL10 canvas, RectF latlonRect, RectF tilesRect, boolean nightMode) {
 		updateTimeStamp();
 	}
 	
